@@ -24,7 +24,7 @@ footer {
     width: 100%;
     height: 300px;
 /*    background: url("/images/cover-bg.jpg") center center no-repeat; */
-    background-color: #ed486f;
+    background-color: #32cd32;
     background-size: cover;
 }
 .cover .cover-inner {
@@ -45,6 +45,6 @@ footer {
     letter-spacing: 0.15em;
 }
 .cover .btn-success {
-    background-color: #ed486f;
-    border-color: #ed486f;
+    background-color: #ff6347;
+    border-color: #ff6347;
 }

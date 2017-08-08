@@ -4,7 +4,7 @@
     <div class="cover">
         <div class="cover-inner">
             <div class="cover-contents">
-                <h1>あなたのルートをシェアしよう</h1>
+                <h1>おすすめルートをシェアしよう</h1>
                 @if (!Auth::check())
                     <a href="{{ route('signup.get') }}" class="btn btn-success btn-lg">ルートシェアを始める</a>
                 @endif
