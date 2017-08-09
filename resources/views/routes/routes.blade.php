@@ -8,10 +8,9 @@
                             スタティックルートを表示
                         </div>
                         <div class="panel-body">
-                            <p class="route-title"><a href="{{ route('items.show', $route->id) }}">{{ $route->description }}</a></p>
+                            <p class="route-title"><a href="#">{{ $route->description }}</a></p>
                             <div class="buttons text-center">
-                                <!--@include('items.want_button', ['route' => $route])-->
-                                <!--@include('items.have_button', ['route' => $route])-->
+                                @include('user_favorite.favorite_button')
                             </div>
                         </div>
                     </div>

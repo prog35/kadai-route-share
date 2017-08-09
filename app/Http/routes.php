@@ -27,7 +27,7 @@ Route::group(['middleware' => 'auth'], function () {
     // ルート
     Route::resource('routes', 'RoutesController', ['only' => ['index','create','show','store', 'destroy']]);
     // お気に入り
-    //Route::post('favo', 'UserRouteController@favo')->name('user_route.favo');
-    //Route::delete('favo', 'UserRouteController@un_favo')->name('user_route.un_favo');
+    Route::post('favorite', 'UserRouteController@favo')->name('routes.favorite');
+    Route::delete('favorite', 'UserRouteController@un_favo')->name('routes.unfavorite');
 });
 

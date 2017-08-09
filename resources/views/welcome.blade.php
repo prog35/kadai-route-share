@@ -16,7 +16,10 @@
     
 
 @else
+
     @section('content')
-        login
+        @include('routes.routes')
+        {!! $routes->render() !!}
     @endsection
+
 @endif

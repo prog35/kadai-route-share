@@ -40,7 +40,7 @@ class User extends Model implements AuthenticatableContract,
 
     public function routes()
     {
-        return $this->belongsToMany(Route::class)->withPivot('type')->withTimestamps();
+        return $this->belongsToMany(Route::class,'user_route','user_id','route_id')->withPivot('type')->withTimestamps();
     }
 
     // ********************************************************
@@ -104,7 +104,8 @@ class User extends Model implements AuthenticatableContract,
     
     public function is_favorite($routeId)
     {
-        return $this->favorite_routes()->where('route_id', $routeId)->exists();
+        $item_Code_exists = $this->favorite_routes()->where('route_id',$routeId)->exists();
+        return $item_Code_exists;
     }
     
     
