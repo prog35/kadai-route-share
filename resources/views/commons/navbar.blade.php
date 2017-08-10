@@ -14,7 +14,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (Auth::check())
                         <li>
-                            <a href="#">
+                            <a href="{{ route('routes.create') }}">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 ルートを作成
                             </a>

@@ -1,4 +1,5 @@
 @if (Auth::user()->is_favorite($route->id))
+    {{ $route->id }}
     {!! Form::open(['route' => ['routes.unfavorite', $route->id], 'method' => 'delete']) !!}
         {!! Form::submit('UnFavorite', ['class' => "btn btn-default btn-xs"]) !!}
     {!! Form::close() !!}

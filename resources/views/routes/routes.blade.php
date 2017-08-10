@@ -2,7 +2,7 @@
     <div class="row">
         @foreach ($routes as $key => $route)
             <div class="route">
-                <div class="col-md-3 col-sm-4 col-xs-12">
+                <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="panel panel-default">
                         <div class="panel-heading text-center">
                             スタティックルートを表示

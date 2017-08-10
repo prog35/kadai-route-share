@@ -51,11 +51,11 @@ class RoutesController extends Controller
      */
     public function create()
     {
-         $message = new Message;
-        
-        return view('messages.create', [
-            'message' => $message,
-        ]);
+        //return view('welcome2');
+        return view('routes.create');
+        //, [
+        //     'user' => $user,
+        // ]);
     }
 
     /**

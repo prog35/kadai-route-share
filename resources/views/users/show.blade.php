@@ -25,7 +25,8 @@
             </ul>
         </div>
     </div>
+    
     @include('routes.routes')
-    {!! $items->render() !!}
+    {!! $routes->render() !!}
 @endsection
 

@@ -14,12 +14,10 @@
         </div>
     @endsection
     
-
 @else
 
     @section('content')
         @include('routes.routes')
         {!! $routes->render() !!}
     @endsection
-
 @endif

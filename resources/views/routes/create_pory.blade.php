@@ -1,46 +1,22 @@
-<!-- http://web-hon.com/contens/googlemap/ -->
+@extends('layouts.appM')
 
-<!DOCTYPE html>
-<html>
-<head>
-	<style>
-		body {
-			margin: 10px 40px;
-			width: 960px;
-		}
-		
-		#map_canvas {
-			width: 720px;
-			height: 500px;
-		}
-		
-		#map_wrap {
-			width: 720px;
-			height: 500px;
-			margin: 20px 0 0 0;
-			padding: 5px;
-			border: solid 1px #ccc;
-			background-color: #fefefe;
-			-webkit-box-shadow: 0px 0px 5px 0px #ccc;
-			-moz-box-shadow: 0px 0px 5px 0px #ccc;
-			box-shadow: 0px 0px 5px 0px #ccc;
-		}
-	</style>
-	
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" ></script>
-	<script src="http://maps.google.com/maps/api/js?key={{ env('GOOGLE_MAPS_JS_ID') }}" type="text/javascript"></script>
-	<script type="text/javascript" src="js/map.js"></script>
-	<script type="text/javascript" src="js/jquery.keybind.js"></script>
+@section('cover')
+	nashi
+@endsection
 
-</head>
-<body>
+@section('content')
+    <div class="row">
 	<div style="margin:20px 0 10px 0;">
 		<input type="button" value="1つ前に戻る" id="redelLine">　<input type="button" value="ラインを全て削除" id="delLine">
 	</div>
+	
 	<!-- canvas -->
-	<div id="map_wrap">
-		<div id="map_canvas"></div>
-	</div>
+
+		<div id="map_wrap">
+			<div id="map_canvas"></div>
+			<!-- <div id="map_canvas" style="width: 720px; height: 500px;"></div> -->
+		</div>
+	
 
 	<div style="margin: 20px 0 40px 0;">緯度：<span id="lat"></span> 経度：<span id="lng"></span></div>
 
@@ -59,6 +35,6 @@
 		<input type="button" value="コードを表示" id="viewcode">　<input type="button" value="ラインのポイントのみを表示" id="viewlinecode"><br /><br />
 		<textarea id="code" name="" cols="70" rows="10" readonly onclick="this.select(0,this.value.length)"></textarea>
 	</div>
+	</div>
+@endsection
 
-</body>
-</html>
