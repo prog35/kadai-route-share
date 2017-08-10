@@ -5,7 +5,7 @@
     <title>TEST</title>
     <link rel="stylesheet" type="text/css" href="../css/style2.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="http://maps.google.com/maps/api/js?key={{ env('GOOGLE_MAPS_JS_ID') }}" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps/api/js?key={{ env('GOOGLE_MAPS_JS_ID') }}&libraries=places" type="text/javascript"></script>
     <script type="text/javascript">
         $(function(){
             var renderFLG=false;
@@ -28,7 +28,7 @@
                 /* 地図オブジェクト生成 */
                 map=new google.maps.Map(document.getElementById("map"), myOptions);
                 if(!renderFLG) render();
-                calcRoute(startSpot,endSpot);
+                // calcRoute(startSpot,endSpot);
             }
             /* ルート検索結果を描画 */
             function render(){
@@ -112,6 +112,14 @@
                 directionsDisplay.setMap(null);
                 renderFLG=false;
             }
+	        
+	        $("#mapButton").click(function(e){
+	        	alert(startSpot);
+	        	startSpot = document.getElementById('mapFrom').value;
+	    		endSpot = document.getElementById('mapTo').value;
+	    		calcRoute(startSpot,endSpot);
+	        });
+	  
         });
         var dbg=function(str){
             try{
@@ -122,6 +130,30 @@
                 //alert("error:"+err);
             }
         }
+
+            
+        function getPlace(){
+		    var mapFrom = document.getElementById('mapFrom');
+		    if(mapFrom.value){
+		        var service = new google.maps.places.PlacesService(map);
+		        var searchValue = mapFrom.value;
+		        var placeRequest = {
+		            query: searchValue, //入力したテキスト
+		        }
+		 
+		        //リクエストを送ってあげるとプライス情報を格納したオブジェクトを返してくれます。
+		        service.textSearch(placeRequest,function(results,status){
+		            var places = results[0];
+		            toGeocode(places);
+		        });
+		    }
+		}
+		function toGeocode(places){
+		    //取得したplacesオブジェクトから緯度と経度をgeocodeとして渡します。
+		    var latlng = new google.maps.LatLng(places.geometry.location.lat(),places.geometry.loca.lng());
+		    //ルート取得
+		    getRoute(latlng);
+		}
     </script>
     <style>
         #map { float:left; width:70%; height:100%; }
@@ -130,8 +162,15 @@
     </style>
 </head>
 <body>
-    <h1>設置サンプル - GMAPv3 - Directions - 2地点間のルート検索</h2>
-    <p>「東京駅」から「六本木ヒルズ」までルートを検索し、右カラムにルート検索結果を表示します。 出発地点A・到着地点Bのマーカーをドラッグすると、それぞれの地点を変更されます。右カラムにあるボタンでルートの表示・非表示、プルダウンでトラベルモード（自動車、自転車、電車、徒歩）を切り替えられます。</p>
+
+    <div class="searchBox">
+	   
+	       <input id="mapFrom" type="text">
+	       <input id="mapTo" type="text">
+	       <button id="mapButton">検索</button>
+	   
+	</div>
+    
     <div id="map"><!-- 地図の埋め込み表示 --></div>
     <div id="side">
         <div class="inner">
