@@ -1,17 +1,27 @@
 <!--http://matsup.blogspot.jp/2012/05/google-map-2.html-->
-@extends('layouts.app')
 
-@section('head')
+<!DOCTYPE html> 
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>TEST</title>
     <link rel="stylesheet" type="text/css" href="../css/style2.css" />
+    
+   <!--追加-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!--ここまで-->
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://maps.google.com/maps/api/js?key={{ env('GOOGLE_MAPS_JS_ID') }}&libraries=places" type="text/javascript"></script>
 	<script type="text/javascript">
 
 	    var map;
-	    var centerLatLng = new google.maps.LatLng(35.0, 136.5);	// 初期表示座標
+	    var centerLatLng = new google.maps.LatLng(35.0, 136.5);
 	    var rendererOptions = { draggable: true };
-	    var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);	// ルート検索結果表示
-	    var directionsService = new google.maps.DirectionsService();					// ルート検索
+	    var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+	    var directionsService = new google.maps.DirectionsService();
 	
 		// Direction service 結果のステータス
 		// OK, MAX_WAYPOINTS_EXCEEDED, NOT_FOUND, INVALID_REQUEST, 
@@ -40,7 +50,7 @@
 	        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	        
 	        directionsDisplay.setMap(map);
-	        //directionsDisplay.setPanel(document.getElementById("directionsPanel"));	// ルート案内は使わない
+	        //directionsDisplay.setPanel(document.getElementById("directionsPanel"));
 	    	// CLickイベント追加
 	        google.maps.event.addListener(map, 'click', function(mouseEvent) {
 	            setPoints(map, mouseEvent.latLng);
@@ -81,37 +91,33 @@
 	        var geocoder = new google.maps.Geocoder();
 	        var strData;
 	        if (document.getElementById("start").checked) { 
-	            document.getElementById("startPoint").value = latlng.lat().toFixed(9)+","+latlng.lng().toFixed(9);
+	            document.getElementById("start_pts").value = latlng.lat().toFixed(9)+","+latlng.lng().toFixed(9);
 	        }
 	        if (document.getElementById("end").checked) { 
-	            document.getElementById("endPoint").value = latlng.lat().toFixed(9)+","+latlng.lng().toFixed(9);
+	            document.getElementById("end_pts").value = latlng.lat().toFixed(9)+","+latlng.lng().toFixed(9);
 	        }
-	        if (document.getElementById("mdl").checked) {
-	            strData = document.getElementById("mdlPoints").value;
+	        if (document.getElementById("waypoint").checked) {
+	            strData = document.getElementById("waypoints").value;
 	            strData += latlng.lat().toFixed(9)+","+latlng.lng().toFixed(9)+"\n";
-	            document.getElementById("mdlPoints").value = strData;
+	            document.getElementById("waypoints").value = strData;
 	        }
 	    }
 	// --------------------------------------------------
-		// クリア処理
 	    function clearAddr() {
-	    	directions.clear();
-	        document.getElementById("startPoint").value = '';
-	        document.getElementById("endPoint").value = '';
-	        document.getElementById("mdlPoints").value = '';
-	        document.getElementById("info_window").value = '';
+	        document.getElementById("start_pts").value = '';
+	        document.getElementById("end_pts").value = '';
+	        document.getElementById("waypoints").value = '';
 	    }
 	// --------------------------------------------------
-		//経路を求める
 	    function calcRoute() {
-	        var start = document.getElementById("startPoint").value;
-	        var end = document.getElementById("endPoint").value;
+	        var start = document.getElementById("start_pts").value;
+	        var end = document.getElementById("end_pts").value;
 	        var hw_flag;
 	        var toll_flag;
 	        var strData = '';
 	
 	        var waypts = [];
-	        var waypoints = document.getElementById("mdlPoints").value;
+	        var waypoints = document.getElementById("waypoints").value;
 	        var wptsArray = waypoints.split("\n");
 	        for (var i = 0; i < wptsArray.length; i++) {
 	            if (wptsArray[i] != '') { waypts.push({location:wptsArray[i], stopover:true}); }
@@ -129,7 +135,6 @@
 	            avoidTolls: toll_flag,
 	            travelMode: google.maps.DirectionsTravelMode.DRIVING
 	        };
-	        // ルート検索して結果がOKであればルート病害
 	        directionsService.route(request, function(response, status) {
 	            if (status == google.maps.DirectionsStatus.OK) {
 	                directionsDisplay.setDirections(response);
@@ -138,77 +143,89 @@
 	        });
 	    }
 	// --------------------------------------------------
-	
-
 	</script>
-@endsection
-
-@section('content')
-		<h1>経路登録</h1>
+	</head>
+	
+	<body>
+		<div class='container'>
 		  <div class='row'>
 			<div class='col-md-8'>
 				<div id="map_canvas"></div>
-				<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;"></span></div>
 			</div>
 			<div class='col-md-4' id="control_panel">
-				
-				<ul>
-					<li>経路は出発点、到着点、中継点の入力後に「経路表示」ボタンで表示できます。</li>
-					<li>各項目は住所または名称を指定します。。</li>
-					<li>ラジオボタン選択後に地図上をクリックすることでも指定可能です。</li>
-					<li>経路表示後にドラッグで経路の変更が可能です。</li>
-				</ul>
-	    		
+	    		<font class="boldblack" size="+1">　2点間の経路検索</font>　radio ボタン＋クリックで指定
+			    <table border="0" cellpadding="2" cellspacing="0">
+			    	<tr>
+			    		<td colspan="4" style="font-size:small;">
+			      　		・各項目は<font class="blue">住所・名称の直接入力可</font>。
+			        		<font class="black">Lat,Lng (緯度,経度) の方が精度高</font><br>
+			      　		・検索後，<font class="blue">ドラッグによる経路変更可</font>。
+			        		<font class="black">経路点数値データも自動修正</font><br>
+			      		</td>
+			      	</tr>
+			    </table>
 			    <hr size="1" class="lightgray">
-	    		
-                {!! Form::open(['route' => 'routes.store']) !!}
-                    <div class="form-group">
-                        {!! Form::radio('select_points','出発地',true,['id' => 'start']) !!}
-                        {!! form::label('startPoint', '出発地') !!}
-                        {!! form::text('startPoint', old('startPoint'), ['class' => 'form-control', 'id' => 'startPoint']) !!}
-					</div>
-					
-					<div class="form-group">
-                        {!! Form::radio('select_points','到着地',false,['id' => 'end']) !!}
-                        {!! Form::label('endPoint', '到着地') !!}
-                        {!! Form::text('endPoint', old('endPoint'), ['class' => 'form-control', 'id' => 'endPoint']) !!}
-                    </div>
-                    
-					<div class="form-group">
-                        {!! Form::radio('select_points','経由地',false,['id' => 'mdl']) !!}
-                        {!! Form::label('mdlPoints', '経由地') !!}
-                        {!! Form::textarea('mdlPoints', old('mdlPoints'), ['class' => 'form-control', 'id' => 'mdlPoints']) !!}
-                        
-                        {!! Form::checkbox('black','高速道路除く',false,['id' => 'nonhighway']) !!}
-                        {!! form::label('black', '高速道路除く') !!}
-                        {!! Form::checkbox('black','有料道路除く',false,['id' => 'nontollway']) !!}
-                    	{!! form::label('black', '有料道路除く') !!}
-                    </div>
-                    
-                    <div class="form-group">
-                        {!! form::button('経路を求める', ['class' => 'btn btn-default','id' => 'btncalcRoute', 'onClick' => 'calcRoute()']) !!}
-                        {!! form::button('入力値クリア', ['class' => 'btn btn-default','id' => 'btncalcClear', 'onClick' => 'clearAddr()']) !!}
-                    </div>
-                    
-  					<div class="form-group">
-  						<!--{!! Form::textarea('info_window', null, ['class' => 'form-control', 'id' => 'info_window']) !!}-->
-  						{!! Form::hidden('info_window', old('info_window'), ['class' => 'form-control', 'id' => 'info_window']) !!}
-  					</div>
-                    
-                    <div class="form-group">
-                        {!! Form::label('description', '経路の説明') !!}
-                        {!! Form::textarea('description', old('description'), ['class' => 'form-control', 'id' => 'mdlPoints']) !!}
-                    </div>
-                    
-                    <div class="form-group">
-                        {!! form::submit('経路を登録', ['class' => 'btn btn-success']) !!}
-                    </div>
-                    
-                    
-                {!! Form::close() !!}
-                
-   		    	<div id="directionsPanel" style="margin:3px; font-size:small; width:340px; height:320px; overflow:scroll;">
-
+	    		<form name="select_points">
+			      	<table border="0" cellpadding="1" cellspacing="0">
+			        	<tr>
+			        		<td style="font-size:small;"> 
+			          			<input type="radio" name="select_points" style="font-size:small;" id="start" checked>出発点
+			          		</td>
+			          		<td>
+			          			<input type="text" size="38" id="start_pts">
+			          		</td>
+			          	</tr>
+			        	<tr>
+			        		<td style="font-size:small;"> 
+			          			<input type="radio" name="select_points" style="font-size:small;" id="end">到着点
+			          		</td>
+			          		<td>
+			          			<input type="text" size="38" id="end_pts">
+			          		</td>
+			          	</tr>
+			        	<tr>
+			        		<td style="font-size:small;"> 
+			          			<input type="radio" name="select_points" id="waypoint">経由地
+			          		</td>
+			          		<td>
+			          			<textarea cols="36" rows="7" id="waypoints" style="font-size:small;"></textarea>
+			          		</td>
+			          	</tr>
+			
+			        	<tr>
+			        		<td colspan="4" align="center" style="font-size:small;">
+			     　   			<input type="checkbox" id="nonhighway" class="black">高速道路除く　　
+			        　			<input type="checkbox" id="nontollway" class="black">有料道路除く
+			        		</td>
+			        	</tr>
+			        	<tr>
+			        		<td colspan="4" align="center">
+				        　		<input type="button" class="boldred100" onclick="calcRoute();" value="経路を求める">　　
+					        　	<input type="button" class="boldblue100" onclick="clearAddr();" value="入力値クリア">
+					        </td>
+					    </tr>
+					</table>
+			    </form>
+	
+		        <hr size="1" class="lightgray">
+			    <table border="0" cellpadding="4" cellspacing="0">
+			      	<tr>
+		      			<td>
+		      				<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;"></span></div>
+			      		</td>
+			      	</tr>
+			      	<tr>
+			      		<td>　　
+			      			<textarea cols="40" rows="8" id="info_window" style="font-size:x-small;"></textarea>
+		      			</td>
+		  		  	</tr>
+			    </table>
+				<hr size="1" class="lightgray">
+		    	<div id="directionsPanel" style="margin:3px; font-size:small; width:340px; height:320px; overflow:scroll;">
+		      		
+			    </div>
 			</div>
 		  </div>
-@endsection
+		</div>
+	</body>
+</html>

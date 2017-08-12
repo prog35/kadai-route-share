@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
+    protected $fillable = ['description', 'status', 'polylin_latlon'];
+
     public function routeDetail()
     {
         return $this->hasMany(RouteDetail::class);

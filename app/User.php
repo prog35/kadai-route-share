@@ -82,6 +82,8 @@ class User extends Model implements AuthenticatableContract,
     {
         $exist = $this->is_favorite($routeId);
         
+        //var_dump($routeId);
+        
         if ($exist) {
             return false;
         } else {

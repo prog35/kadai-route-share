@@ -17,9 +17,10 @@ class UserRouteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $route_id)
+    public function store()
     {
-        \Auth::user()->favorite($route_id);
+        
+        \Auth::user()->favorite(request()->route_id);
         return redirect()->back();
     }
 
@@ -31,9 +32,9 @@ class UserRouteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($route_id)
+    public function destroy()
     {
-        \Auth::user()->unfavorite($route_id);
+        \Auth::user()->unfavorite(request()->route_id);
         return redirect()->back();
 
     }

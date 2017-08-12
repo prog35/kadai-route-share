@@ -16,6 +16,7 @@ class CreateRoutesTable extends Migration
             $table->increments('id');
             $table->string('description');
             $table->smallinteger('status')->index();
+            $table->mediumtext('polylin_latlon');
             $table->timestamps();
         });
     }

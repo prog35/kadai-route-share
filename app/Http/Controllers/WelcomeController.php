@@ -23,12 +23,13 @@ class WelcomeController extends Controller
             $user = \Auth::user();
             $routes = \DB::table('route_detail')
                 ->join('routes', 'route_detail.route_id', '=', 'routes.id')
-                ->select('routes.id','routes.description',
+                ->select('routes.id','routes.description','routes.polylin_latlon',
                          \DB::raw('GROUP_CONCAT(route_detail.latitude) as lats,GROUP_CONCAT(route_detail.longitude) as lons'),
                          'routes.created_at')
-                ->groupby('routes.id','routes.description','routes.created_at')
+                ->groupby('routes.id','routes.description','polylin_latlon','routes.created_at')
                 ->orderby('created_at', 'desc')
                 ->paginate(10);
+            
             
             $data = [
                 'user' => $user,

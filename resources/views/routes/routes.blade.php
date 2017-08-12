@@ -5,7 +5,7 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="panel panel-default">
                         <div class="panel-heading text-center">
-                            スタティックルートを表示
+                            <img src="{{ $route->polylin_latlon }}" class="img-responsive">
                         </div>
                         <div class="panel-body">
                             <p class="route-title"><a href="#">{{ $route->description }}</a></p>
