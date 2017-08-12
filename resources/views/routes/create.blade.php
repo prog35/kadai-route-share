@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('head')
-    <link rel="stylesheet" type="text/css" href="../css/style2.css" />
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://maps.google.com/maps/api/js?key={{ env('GOOGLE_MAPS_JS_ID') }}&libraries=places" type="text/javascript"></script>
 	<script type="text/javascript">

@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-left" href="/"><img src="images/logo.png" alt="RouteShare"></a>
+                <a class="navbar-left" href="/"><img src="{{ asset('images/logo.png') }}" alt="RouteShare"></a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">

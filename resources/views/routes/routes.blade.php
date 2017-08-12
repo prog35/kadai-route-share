@@ -5,10 +5,10 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="panel panel-default">
                         <div class="panel-heading text-center">
-                            <img src="{{ $route->polylin_latlon }}" class="img-responsive">
+                            <a href="{{ route('routes.show',$route->id) }}"><img src="{{ $route->polylin_latlon }}" class="img-responsive"></a>
                         </div>
                         <div class="panel-body">
-                            <p class="route-title"><a href="#">{{ $route->description }}</a></p>
+                            <p class="route-title">{{ $route->description }}</p>
                             <div class="buttons text-center">
                                 @include('user_favorite.favorite_button')
                             </div>

@@ -66,3 +66,5 @@ footer {
     border-color: #ff6347;
 }
 
+/* map_canvas */
+#map_canvas{width:600px;height:600px;}

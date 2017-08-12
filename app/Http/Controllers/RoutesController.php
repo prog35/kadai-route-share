@@ -52,11 +52,7 @@ class RoutesController extends Controller
      */
     public function create()
     {
-        //return view('welcome2');
         return view('routes.create');
-        //, [
-        //     'user' => $user,
-        // ]);
     }
 
     /**
@@ -110,11 +106,8 @@ class RoutesController extends Controller
                 ]);
             }
         });
-        // $request->user()->microposts()->create([
-        //     'content' => $request->content,
-        // ]);
         
-//        return;
+        
         return redirect('/');
     }
 
@@ -126,7 +119,36 @@ class RoutesController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = [];
+
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $routes = \DB::table('route_detail')
+                ->join('routes', 'route_detail.route_id', '=', 'routes.id')
+                ->select('routes.id','routes.description','routes.polylin_latlon',
+                         'route_detail.latitude','route_detail.longitude','routes.created_at')
+                ->where('routes.id', $id)
+                ->orderby('created_at', 'desc')
+                ->get();
+            
+            
+            // 配列へ
+            foreach ($routes as $route) {
+                $latlons[] = "new google.maps.LatLng(" . $route->latitude . "," . $route->longitude . "),";
+            }
+    
+            $latlons[count($latlons)-1] = rtrim($latlons[count($latlons)-1], ',');
+            
+            //var_dump($latlons);
+            
+            $data = [
+                'user' => $user,
+                'routes' => $routes,
+                'latlons' => $latlons,
+            ];
+        }
+ 
+        return view('routes.show', $data);
     }
 
     /**
