@@ -15,8 +15,8 @@ class CreateRouteDetailTable extends Migration
         Schema::create('route_detail', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('route_id')->unsigned()->index();
-            $table->double('latitude', 9,6);
-            $table->double('longitude', 9,6);
+            $table->double('lat', 9,6);
+            $table->double('lng', 9,6);
             $table->timestamps();
             
             // 外部キー

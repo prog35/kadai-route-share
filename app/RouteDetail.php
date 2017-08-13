@@ -8,7 +8,7 @@ class RouteDetail extends Model
 {
     protected $table = 'route_detail';
     
-    protected $fillable = ['route_id', 'latitude','longitude'];
+    protected $fillable = ['route_id', 'lat','lng'];
 
     public function route()
     {

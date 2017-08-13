@@ -29,11 +29,11 @@ class UsersController extends Controller
         $routes = \DB::table('route_detail')
             ->join('routes', 'route_detail.route_id', '=', 'routes.id')
             ->join('user_route', 'routes.id', '=', 'user_route.route_id')
-            ->select('routes.id','routes.description','routes.polylin_latlon',
-                     \DB::raw('GROUP_CONCAT(route_detail.latitude) as lats,GROUP_CONCAT(route_detail.longitude) as lons'),
+            ->select('routes.id','routes.description','routes.static_map_url',
+                     \DB::raw('GROUP_CONCAT(route_detail.lat) as lats,GROUP_CONCAT(route_detail.lon) as lons'),
                      'routes.created_at')
             ->where('user_route.user_id', $user->id)
-            ->groupby('routes.id','routes.description','routes.polylin_latlon','routes.created_at')
+            ->groupby('routes.id','routes.description','routes.static_map_url','routes.created_at')
             ->orderby('created_at', 'desc')
             ->paginate(10);
 

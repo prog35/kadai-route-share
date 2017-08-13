@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
-    protected $fillable = ['description', 'status', 'polylin_latlon'];
+    protected $fillable = ['description', 'status', 'static_map_url','zoom','center_lat','center_lng'];
 
     public function routeDetail()
     {

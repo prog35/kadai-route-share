@@ -28,8 +28,8 @@
 	
 	
 			var flightPlanCoordinates = [
-				@foreach ($latlons as $latlon)
-					{{ $latlon }}
+				@foreach ($latlngs as $latlng)
+					{{ $latlng }}
 				@endforeach
 				
 		      //new google.maps.LatLng(37.772323, -122.214897),

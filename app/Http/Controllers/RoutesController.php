@@ -79,10 +79,10 @@ class RoutesController extends Controller
             // ２次元配列へ
             foreach ($points as $row) {
                 $point = explode(',',$row);  
-                $lat_lon[] = array($point[0],$point[1]);
+                $latlngs[] = array($point[0],$point[1]);
             }
             
-            // var_dump($this->getStaticMapUri($lat_lon));
+            // var_dump($this->getStaticMapUrl($latlngs));
             // return;
             //////////////////////
             // ルートの登録
@@ -93,16 +93,19 @@ class RoutesController extends Controller
             $route = Route::create([
                 'description' => $request->description,
                 'status' => $status,
-                'polylin_latlon' => $this->getStaticMapUri($lat_lon),
+                'static_map_url' => $this->getStaticMapUrl($latlngs),
+                'zoom' => 1,
+                'center_lat' => 2,
+                'center_lng' => 3,
             ]);
             //////////////////////
             // ルート明細の登録
             //////////////////////
-            foreach($lat_lon as $row) {
+            foreach($latlngs as $row) {
                 RouteDetail::create([
                     'route_id' => $route->id,
-                    'latitude' => $row[0],
-                    'longitude' => $row[1],
+                    'lat' => $row[0],
+                    'lng' => $row[1],
                 ]);
             }
         });
@@ -125,8 +128,8 @@ class RoutesController extends Controller
             $user = \Auth::user();
             $routes = \DB::table('route_detail')
                 ->join('routes', 'route_detail.route_id', '=', 'routes.id')
-                ->select('routes.id','routes.description','routes.polylin_latlon',
-                         'route_detail.latitude','route_detail.longitude','routes.created_at')
+                ->select('routes.id','routes.description','routes.static_map_url',
+                         'route_detail.lat','route_detail.lng','routes.created_at')
                 ->where('routes.id', $id)
                 ->orderby('created_at', 'desc')
                 ->get();
@@ -134,17 +137,17 @@ class RoutesController extends Controller
             
             // 配列へ
             foreach ($routes as $route) {
-                $latlons[] = "new google.maps.LatLng(" . $route->latitude . "," . $route->longitude . "),";
+                $latlngs[] = "new google.maps.LatLng(" . $route->lat . "," . $route->lng . "),";
             }
     
-            $latlons[count($latlons)-1] = rtrim($latlons[count($latlons)-1], ',');
+            $latlons[count($latlngs)-1] = rtrim($latlons[count($latlngs)-1], ',');
             
-            //var_dump($latlons);
+            //var_dump($latlngs);
             
             $data = [
                 'user' => $user,
                 'routes' => $routes,
-                'latlons' => $latlons,
+                'latlngs' => $latlngs,
             ];
         }
  
@@ -186,7 +189,7 @@ class RoutesController extends Controller
     }
     
     
-    public function getStaticMapUri($latlngs) {
+    public function getStaticMapUrl($latlngs) {
         // ポリラインエンコードしてURLを出力（実際は改行は入っていない）
         return "http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:".$this->latlon2GooglePolyline($latlngs)."\n";
     }
