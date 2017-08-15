@@ -19,31 +19,32 @@ class RoutesController extends Controller
      */
     public function index()
     {
-
-    }
-    
-    public function search($keyword)
-    {
         // 登録されているルートを読み込み、ビューへ渡す
         $keyword = request()->keyword;
         
-        if ($keyword) {
-            $routes = Route::all()->where('','')->orderBy('created_at', 'desc')->paginate(10);
+        if (empty($keyword)) {
+            $routes = \DB::table('routes')->orderBy('created_at', 'desc')->paginate(10);
         }
         else {
-            $routes = Route::all()->where('','')->orderBy('created_at', 'desc')->paginate(10);
+            $param = $keyword;
+            $routes = \DB::table('routes')
+                ->where('description','like',"%{$param}%")
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+    
         }
         
         $data = [
-            'user' => $user,
+            'user' => \Auth::user(),
             'routes' => $routes,
+            'keyword' => $keyword,
         ];
         
-        return view('routes.index', [
-            'keyword' => $keyword,
-            'routes' => $routes,
-        ]);
+
+        return view('welcome', $data);
     }
+    
+
 
     /**
      * Show the form for creating a new resource.
@@ -63,11 +64,12 @@ class RoutesController extends Controller
      */
     public function store(Request $request)
     {
-            
-//　経路が登録されていない    
-//         $this->validate($request, [
-//             'info_window' => 'required',
-//         ]);
+        // 経路も必須
+        // 説明は必須
+        $this->validate($request, [
+            'info_window' => 'required',
+            'description' => 'required|max:255',
+        ]);
         
         \DB::transaction(function() use ($request) {
             
@@ -94,9 +96,9 @@ class RoutesController extends Controller
                 'description' => $request->description,
                 'status' => $status,
                 'static_map_url' => $this->getStaticMapUrl($latlngs),
-                'zoom' => 1,
-                'center_lat' => 2,
-                'center_lng' => 3,
+                'zoom' => $request->zoom,
+                'center_lat' => $request->center_lat,
+                'center_lng' => $request->center_lng,
             ]);
             //////////////////////
             // ルート明細の登録
@@ -108,6 +110,10 @@ class RoutesController extends Controller
                     'lng' => $row[1],
                 ]);
             }
+            /////////////////////
+            // UserRoutemの登録
+            ////////////////////
+            $request->user()->owner($route->id);
         });
         
         
@@ -128,25 +134,25 @@ class RoutesController extends Controller
             $user = \Auth::user();
             $routes = \DB::table('route_detail')
                 ->join('routes', 'route_detail.route_id', '=', 'routes.id')
-                ->select('routes.id','routes.description','routes.static_map_url',
+                ->select('routes.id','routes.description','routes.static_map_url','routes.zoom','routes.center_lat','routes.center_lng',
                          'route_detail.lat','route_detail.lng','routes.created_at')
                 ->where('routes.id', $id)
                 ->orderby('created_at', 'desc')
                 ->get();
             
             
-            // 配列へ
+            // latlngを配列へ
             foreach ($routes as $route) {
                 $latlngs[] = "new google.maps.LatLng(" . $route->lat . "," . $route->lng . "),";
             }
     
-            $latlons[count($latlngs)-1] = rtrim($latlons[count($latlngs)-1], ',');
+            $latlngs[count($latlngs)-1] = rtrim($latlngs[count($latlngs)-1], ',');
             
-            //var_dump($latlngs);
+            // var_dump($routes);
             
             $data = [
                 'user' => $user,
-                'routes' => $routes,
+                'route' => $routes[0],
                 'latlngs' => $latlngs,
             ];
         }

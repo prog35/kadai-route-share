@@ -39,7 +39,7 @@
 	        }
 	        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	        
-	        directionsDisplay.setMap(map);
+	        //directionsDisplay.setMap(map);
 	        //directionsDisplay.setPanel(document.getElementById("directionsPanel"));	// ルート案内は使わない
 	    	// CLickイベント追加
 	        google.maps.event.addListener(map, 'click', function(mouseEvent) {
@@ -64,13 +64,21 @@
 	        }
 	        
 	        document.getElementById("info_window").value = strData;
+	        document.getElementById("zoom").value = map.getZoom();
+	        
+	        var pos = map.getCenter();
+	        document.getElementById("center_lat").value = pos.lat();
+	        document.getElementById("center_lng").value = pos.lng();
+	
 	    }
 	// --------------------------------------------------
 		// ルート変更
 	    function modifyDirectionDataProcess(result) {
 	        var total = 0;
 	        var myroute = result.routes[0];
-	        for (i = 0; i < myroute.legs.length; i++) { total += myroute.legs[i].distance.value; }
+	        for (i = 0; i < myroute.legs.length; i++) { 
+	        	total += myroute.legs[i].distance.value; 
+	        }
 	        total = total / 1000;
 	        document.getElementById("total").innerHTML = total + " km";
 	        displayRouteString(result);
@@ -95,11 +103,16 @@
 	// --------------------------------------------------
 		// クリア処理
 	    function clearAddr() {
-	    	directions.clear();
+	    	
+	    	directionsDisplay.setMap(null);
 	        document.getElementById("startPoint").value = '';
 	        document.getElementById("endPoint").value = '';
 	        document.getElementById("mdlPoints").value = '';
 	        document.getElementById("info_window").value = '';
+	        document.getElementById("zoom").value = '';
+	        document.getElementById("center_lat").value = '';
+	        document.getElementById("center_lng").value = '';
+	        document.getElementById("total").innerHTML = "";
 	    }
 	// --------------------------------------------------
 		//経路を求める
@@ -120,6 +133,8 @@
 	        if (document.getElementById("nonhighway").checked) { hw_flag = true; } else { hw_flag = false; }
 	        if (document.getElementById("nontollway").checked) { toll_flag = true; } else { toll_flag = false; }
 	
+			directionsDisplay.setMap(map);
+	
 	        var request = {
 	            origin: start, 
 	            destination: end,
@@ -129,7 +144,7 @@
 	            avoidTolls: toll_flag,
 	            travelMode: google.maps.DirectionsTravelMode.DRIVING
 	        };
-	        // ルート検索して結果がOKであればルート病害
+	        // ルート検索して結果がOKであればルートを表示
 	        directionsService.route(request, function(response, status) {
 	            if (status == google.maps.DirectionsStatus.OK) {
 	                directionsDisplay.setDirections(response);
@@ -144,60 +159,68 @@
 @endsection
 
 @section('content')
-		<h1>経路登録</h1>
 		  <div class='row'>
 			<div class='col-md-8'>
 				<div id="map_canvas"></div>
+				<p>
 				<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;"></span></div>
+				</p>
 			</div>
-			<div class='col-md-4' id="control_panel">
-				
+			<div class='col-md-4'>
+
 				<ul>
-					<li>経路は出発点、到着点、中継点の入力後に「経路表示」ボタンで表示できます。</li>
+					<li>経路は出発地、到着地、経由地の入力後に「経路を表示」ボタンで表示できます。</li>
 					<li>各項目は住所または名称を指定します。。</li>
 					<li>ラジオボタン選択後に地図上をクリックすることでも指定可能です。</li>
 					<li>経路表示後にドラッグで経路の変更が可能です。</li>
 				</ul>
 	    		
 			    <hr size="1" class="lightgray">
-	    		
+
+	            <div class="form-group">
+	                {!! Form::radio('select_points','出発地',true,['id' => 'start']) !!}
+	                {!! form::label('startPoint', '出発地') !!}
+	                {!! form::text('startPoint', old('startPoint'), ['class' => 'form-control', 'id' => 'startPoint']) !!}
+				</div>
+				
+				<div class="form-group">
+	                {!! Form::radio('select_points','到着地',false,['id' => 'end']) !!}
+	                {!! Form::label('endPoint', '到着地') !!}
+	                {!! Form::text('endPoint', old('endPoint'), ['class' => 'form-control', 'id' => 'endPoint']) !!}
+	            </div>
+	
+	                    
+				<div class="form-group">
+	                {!! Form::radio('select_points','経由地',false,['id' => 'mdl']) !!}
+	                {!! Form::label('mdlPoints', '経由地') !!}
+	                {!! Form::textarea('mdlPoints', old('mdlPoints'), ['class' => 'form-control', 'id' => 'mdlPoints', 'rows' => '4']) !!}
+	                
+	                {!! Form::checkbox('black','高速道路除く',false,['id' => 'nonhighway']) !!}
+	                {!! form::label('black', '高速道路除く') !!}
+	                {!! Form::checkbox('black','有料道路除く',false,['id' => 'nontollway']) !!}
+	            	{!! form::label('black', '有料道路除く') !!}
+	            </div>
+	            
+	            <div class="form-group">
+	                {!! form::button('経路を表示', ['class' => 'btn btn-default','id' => 'btncalcRoute', 'onClick' => 'calcRoute()']) !!}
+	                {!! form::button('入力値クリア', ['class' => 'btn btn-default','id' => 'btncalcClear', 'onClick' => 'clearAddr()']) !!}
+	            </div>
+			</div>
+		  <div class='row'></div>
+			<div class='col-md-8' id="control_panel">
                 {!! Form::open(['route' => 'routes.store']) !!}
-                    <div class="form-group">
-                        {!! Form::radio('select_points','出発地',true,['id' => 'start']) !!}
-                        {!! form::label('startPoint', '出発地') !!}
-                        {!! form::text('startPoint', old('startPoint'), ['class' => 'form-control', 'id' => 'startPoint']) !!}
-					</div>
-					
-					<div class="form-group">
-                        {!! Form::radio('select_points','到着地',false,['id' => 'end']) !!}
-                        {!! Form::label('endPoint', '到着地') !!}
-                        {!! Form::text('endPoint', old('endPoint'), ['class' => 'form-control', 'id' => 'endPoint']) !!}
-                    </div>
-                    
-					<div class="form-group">
-                        {!! Form::radio('select_points','経由地',false,['id' => 'mdl']) !!}
-                        {!! Form::label('mdlPoints', '経由地') !!}
-                        {!! Form::textarea('mdlPoints', old('mdlPoints'), ['class' => 'form-control', 'id' => 'mdlPoints']) !!}
-                        
-                        {!! Form::checkbox('black','高速道路除く',false,['id' => 'nonhighway']) !!}
-                        {!! form::label('black', '高速道路除く') !!}
-                        {!! Form::checkbox('black','有料道路除く',false,['id' => 'nontollway']) !!}
-                    	{!! form::label('black', '有料道路除く') !!}
-                    </div>
-                    
-                    <div class="form-group">
-                        {!! form::button('経路を求める', ['class' => 'btn btn-default','id' => 'btncalcRoute', 'onClick' => 'calcRoute()']) !!}
-                        {!! form::button('入力値クリア', ['class' => 'btn btn-default','id' => 'btncalcClear', 'onClick' => 'clearAddr()']) !!}
-                    </div>
-                    
+
   					<div class="form-group">
   						<!--{!! Form::textarea('info_window', null, ['class' => 'form-control', 'id' => 'info_window']) !!}-->
   						{!! Form::hidden('info_window', old('info_window'), ['class' => 'form-control', 'id' => 'info_window']) !!}
+  						{!! Form::hidden('zoom', old('zoom'), ['class' => 'form-control', 'id' => 'zoom']) !!}
+  						{!! Form::hidden('center_lat', old('center_lat'), ['class' => 'form-control', 'id' => 'center_lat']) !!}
+  						{!! Form::hidden('center_lng', old('center_lng'), ['class' => 'form-control', 'id' => 'center_lng']) !!}
   					</div>
                     
                     <div class="form-group">
                         {!! Form::label('description', '経路の説明') !!}
-                        {!! Form::textarea('description', old('description'), ['class' => 'form-control', 'id' => 'mdlPoints']) !!}
+                        {!! Form::textarea('description', old('description'), ['class' => 'form-control', 'id' => 'description', 'rows' => '3']) !!}
                     </div>
                     
                     <div class="form-group">

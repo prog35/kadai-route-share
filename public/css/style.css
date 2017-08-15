@@ -8,11 +8,18 @@ footer {
     margin-top: 40px;
 }
 
-#map_canvas {
-	width: 720px;
-	height: 500px;
+#searchbox {
+    padding-bottom: 10px;
 }
 
+/* マップ表示領域 */
+#map_canvas{
+    position: relative;
+    padding-bottom: 75%;
+    width: 100%;
+    height: 100%;
+    
+}
 #map_wrap {
 	width: 720px;
 	height: 500px;
@@ -66,5 +73,13 @@ footer {
     border-color: #ff6347;
 }
 
-/* map_canvas */
-#map_canvas{width:600px;height:600px;}
+
+
+
+p.route-description {
+    /* 文の行数を2行に保ち、最後に ... を追加するスタイル */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
