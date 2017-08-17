@@ -31,6 +31,8 @@
         </div>
         
         @include('routes.routes')
-        {!! $routes->render() !!}
+        <div class="text-center">
+            {!! $routes->render() !!}
+        </div>
     @endsection
 @endif

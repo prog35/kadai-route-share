@@ -20,8 +20,8 @@ class CreateUserRouteTable extends Migration
             $table->timestamps();
             
             // 外部キー
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('route_id')->references('id')->on('routes');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
             // 一意制約
             $table->unique(['user_id','route_id']);
         });

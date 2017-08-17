@@ -9,6 +9,9 @@
                         </div>
                         <div class="panel-body">
                             <p class="route-description">{{ $route->description }}</p>
+                            
+                        </div>
+                        <div class="panel-footer">
                             <div class="buttons text-center">
                                 @include('user_favorite.favorite_button')
                             </div>

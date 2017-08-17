@@ -20,7 +20,10 @@ class CreateRouteDetailTable extends Migration
             $table->timestamps();
             
             // 外部キー
-            $table->foreign('route_id')->references('id')->on('routes');
+            $table->foreign('route_id')
+                    ->references('id')
+                    ->on('routes')
+                    ->onDelete('cascade');
         });
     }
 

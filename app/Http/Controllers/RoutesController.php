@@ -71,6 +71,7 @@ class RoutesController extends Controller
             'description' => 'required|max:255',
         ]);
         
+        
         \DB::transaction(function() use ($request) {
             
             //改行コードを置換してLF改行コードに統一
@@ -99,6 +100,7 @@ class RoutesController extends Controller
                 'zoom' => $request->zoom,
                 'center_lat' => $request->center_lat,
                 'center_lng' => $request->center_lng,
+                'total_distance' => $request->total_distance,
             ]);
             //////////////////////
             // ルート明細の登録
@@ -134,7 +136,7 @@ class RoutesController extends Controller
             $user = \Auth::user();
             $routes = \DB::table('route_detail')
                 ->join('routes', 'route_detail.route_id', '=', 'routes.id')
-                ->select('routes.id','routes.description','routes.static_map_url','routes.zoom','routes.center_lat','routes.center_lng',
+                ->select('routes.id','routes.description','routes.static_map_url','routes.zoom','routes.center_lat','routes.center_lng','routes.total_distance',
                          'route_detail.lat','route_detail.lng','routes.created_at')
                 ->where('routes.id', $id)
                 ->orderby('created_at', 'desc')
@@ -191,7 +193,13 @@ class RoutesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        ////////////////////
+        // Route Table  
+        ////////////////////
+        $route = Route::find($id);
+        $route->delete();
+
+        return redirect('/');
     }
     
     

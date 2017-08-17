@@ -24,19 +24,11 @@
 	        }
 	        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	        
-	        //directionsDisplay.setMap(map);
-	
-	
 			var flightPlanCoordinates = [
 				@foreach ($latlngs as $latlng)
 					{{ $latlng }}
 				@endforeach
-				
-		      //new google.maps.LatLng(37.772323, -122.214897),
-		      //new google.maps.LatLng(21.291982, -157.821856),
-		      //new google.maps.LatLng(-18.142599, 178.431),
-		      //new google.maps.LatLng(-27.46758, 153.027892)
-		    ];
+			];
 		    
 		    var flightPath = new google.maps.Polyline({
 		      path: flightPlanCoordinates,
@@ -47,7 +39,7 @@
 		     
 		    flightPath.setMap(map);
 		    
-		    // fit bounds
+		    // fit bounds　経路全体が表示される最適なサイズで表示
 			var latLngBounds = new google.maps.LatLngBounds() ;
 			
 			flightPath.getPath().forEach( function ( latLng ) {
@@ -64,19 +56,29 @@
 
 
 @section('content')
-		<h1>経路詳細</h1>
-		  <div class='row'>
-			<div class='col-md-8'>
-				<div id="map_canvas"></div>
-				<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;"></span></div>
-			</div>
-		  </div>
-		  <div class='row'>
-		  	<div class='col-md-8'>
-                      <div class="form-group">
-                        {!! Form::label('description', '経路の説明') !!}
-                        {!! Form::textarea('description', $route->description, ['class' => 'form-control', 'id' => 'description', 'readonly'=> 'true' ]) !!}
-                    </div>
-            </div>
-		  </div>
+	作成日：{{ $route->created_at }}
+  	<div class='row'>
+		<div class='center-block'>
+			<div id="map_canvas"></div>
+			<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;">{{ $route->total_distance }} km</span></div>
+		</div>
+  	</div>
+  	<div class='row'>
+	  	<div class='center-block'>
+          	<div class="form-group">
+            	{!! Form::label('description', '経路の説明') !!}
+            	{!! Form::textarea('description', $route->description, ['class' => 'form-control', 'id' => 'description', 'rows' => '3', 'readonly'=> 'true' ]) !!}
+	        </div>
+        </div>
+  	</div>
+  	
+  	@if (Auth::user()->is_owner($route->id))
+	<div class='row' >
+	  	<div class='center-block text-center'>
+		    {!! Form::model($route, ['route' => ['routes.destroy', $route->id], 'method' => 'delete']) !!}
+		        {!! Form::submit('削除',['class' => 'btn btn-danger']) !!}
+		    {!! Form::close() !!}
+		</div>
+	</div>
+	@endif
 @endsection

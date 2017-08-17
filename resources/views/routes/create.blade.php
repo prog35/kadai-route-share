@@ -81,6 +81,7 @@
 	        }
 	        total = total / 1000;
 	        document.getElementById("total").innerHTML = total + " km";
+	        document.getElementById('total_distance').value = total;
 	        displayRouteString(result);
 	    }
 	// --------------------------------------------------
@@ -112,6 +113,8 @@
 	        document.getElementById("zoom").value = '';
 	        document.getElementById("center_lat").value = '';
 	        document.getElementById("center_lng").value = '';
+	        document.getElementById("total_distance").value = '';
+	        
 	        document.getElementById("total").innerHTML = "";
 	    }
 	// --------------------------------------------------
@@ -153,7 +156,27 @@
 	        });
 	    }
 	// --------------------------------------------------
-	
+
+
+		function checkForm() {
+			var err_msg = "";
+			if (document.getElementById('info_window').value == "" ) {
+				err_msg = "経路を指定してください。";
+			}
+			
+			if (document.getElementById('description').value == "" ) {
+				if(err_msg.length > 0) err_msg += '\n';
+				err_msg += "経路の説明を入力してください。";
+			}
+			
+			if (err_msg.length > 0 ) {
+				alert(err_msg);
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
 
 	</script>
 @endsection
@@ -163,19 +186,25 @@
 			<div class='col-md-8'>
 				<div id="map_canvas"></div>
 				<p>
-				<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;"></span></div>
+					<div style="font-size:mideum;">距離: <span id="total" style="font-size:small;"></span></div>
 				</p>
 			</div>
 			<div class='col-md-4'>
 
-				<ul>
-					<li>経路は出発地、到着地、経由地の入力後に「経路を表示」ボタンで表示できます。</li>
-					<li>各項目は住所または名称を指定します。。</li>
-					<li>ラジオボタン選択後に地図上をクリックすることでも指定可能です。</li>
-					<li>経路表示後にドラッグで経路の変更が可能です。</li>
-				</ul>
-	    		
-			    <hr size="1" class="lightgray">
+				<div class="panel panel-default small">
+				  <div class="panel-heading">
+				    <h3 class="panel-title">ルート指定方法</h3>
+				  </div>
+				  <div class="panel-body" id='info_msg'>
+				    <ul class="list-unstyled">
+						<li>経路は出発地、到着地、経由地の入力後に「経路を表示」ボタンで表示できます。</li>
+						<li>各項目は住所または名称を指定します。</li>
+						<li>ラジオボタン選択後に地図上をクリックすることでも指定可能です。</li>
+						<li>経路表示後にドラッグで経路の変更が可能です。</li>
+				    </ul>
+				  </div>
+				</div>
+
 
 	            <div class="form-group">
 	                {!! Form::radio('select_points','出発地',true,['id' => 'start']) !!}
@@ -208,7 +237,7 @@
 			</div>
 		  <div class='row'></div>
 			<div class='col-md-8' id="control_panel">
-                {!! Form::open(['route' => 'routes.store']) !!}
+                {!! Form::open(['route' => 'routes.store', 'onSubmit' => 'return checkForm()']) !!}
 
   					<div class="form-group">
   						<!--{!! Form::textarea('info_window', null, ['class' => 'form-control', 'id' => 'info_window']) !!}-->
@@ -216,6 +245,7 @@
   						{!! Form::hidden('zoom', old('zoom'), ['class' => 'form-control', 'id' => 'zoom']) !!}
   						{!! Form::hidden('center_lat', old('center_lat'), ['class' => 'form-control', 'id' => 'center_lat']) !!}
   						{!! Form::hidden('center_lng', old('center_lng'), ['class' => 'form-control', 'id' => 'center_lng']) !!}
+  						{!! Form::hidden('total_distance', old('total_distance'), ['class' => 'form-control', 'id' => 'total_distance']) !!}
   					</div>
                     
                     <div class="form-group">
@@ -223,7 +253,7 @@
                         {!! Form::textarea('description', old('description'), ['class' => 'form-control', 'id' => 'description', 'rows' => '3']) !!}
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group text-center">
                         {!! form::submit('経路を登録', ['class' => 'btn btn-success']) !!}
                     </div>
                     

@@ -20,6 +20,7 @@ class CreateRoutesTable extends Migration
             $table->float('zoom', 8,6);
             $table->double('center_lat', 9,6);
             $table->double('center_lng', 9,6);
+            $table->string('total_distance');
             $table->timestamps();
         });
     }
